@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UHI Detection System</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root {
+    --bg: #0a0c10;
+    --panel: #10141c;
+    --border: #1e2535;
+    --red: #ff2200;
+    --orange: #ff7700;
+    --yellow: #ffcc00;
+    --green: #2ecc71;
+    --blue: #00b4d8;
+    --text: #e8eaf0;
+    --muted: #5a6680;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Syne',sans-serif; display:flex; height:100vh; overflow:hidden; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width:260px; background:var(--panel); border-right:1px solid var(--border);
+    display:flex; flex-direction:column; flex-shrink:0;
+  }
+  .logo { padding:24px; border-bottom:1px solid var(--border); }
+  .logo-title { font-size:13px; font-weight:800; letter-spacing:.12em; color:var(--red); text-transform:uppercase; }
+  .logo-sub { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); margin-top:4px; }
+
+  .nav { padding:20px 0; flex:1; }
+  .nav-label { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.2em; color:var(--muted); padding:0 24px; margin-bottom:8px; text-transform:uppercase; }
+  .nav-item {
+    display:flex; align-items:center; gap:12px; padding:12px 24px;
+    cursor:pointer; font-size:14px; font-weight:600; color:var(--muted);
+    border-left:3px solid transparent; transition:all .2s;
+  }
+  .nav-item:hover { color:var(--text); background:rgba(255,255,255,.03); }
+  .nav-item.active { color:var(--red); border-left-color:var(--red); background:rgba(255,34,0,.07); }
+
+  .sidebar-bottom { padding:16px; border-top:1px solid var(--border); }
+  .city-box { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:12px; }
+  .city-label { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.15em; color:var(--muted); text-transform:uppercase; margin-bottom:8px; }
+  .city-select {
+    width:100%; background:transparent; border:none; color:var(--text);
+    font-family:'Syne',sans-serif; font-size:15px; font-weight:700;
+    cursor:pointer; outline:none; appearance:none;
+  }
+  .city-select option { background:var(--panel); }
+  .analyze-btn {
+    width:100%; padding:14px; background:var(--red); border:none; border-radius:8px;
+    color:white; font-family:'Syne',sans-serif; font-size:13px; font-weight:800;
+    letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:opacity .2s;
+  }
+  .analyze-btn:hover { opacity:.85; }
+
+  /* MAIN */
+  .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+  .topbar {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 28px; border-bottom:1px solid var(--border); background:var(--panel);
+  }
+  .topbar h1 { font-size:20px; font-weight:800; }
+  .topbar p { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); margin-top:2px; }
+  .status-badge {
+    display:flex; align-items:center; gap:8px; padding:8px 16px;
+    border:1px solid var(--border); border-radius:100px;
+    font-family:'Space Mono',monospace; font-size:11px;
+  }
+  .status-dot { width:8px; height:8px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* STAT CARDS */
+  .stats-row { display:flex; border-bottom:1px solid var(--border); background:var(--border); gap:1px; flex-shrink:0; }
+  .stat-card { flex:1; background:var(--panel); padding:20px 24px; }
+  .stat-top { height:3px; margin:-20px -24px 16px; }
+  .stat-lbl { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.18em; color:var(--muted); text-transform:uppercase; }
+  .stat-val { font-size:32px; font-weight:800; line-height:1; margin-top:8px; }
+  .stat-unit { font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); margin-top:4px; }
+
+  /* PAGES */
+  .page { display:none; flex:1; overflow:hidden; }
+  .page.active { display:flex; }
+
+  /* DASHBOARD */
+  #page-dashboard { flex-direction:row; }
+  .dash-left { flex:1; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:20px; border-right:1px solid var(--border); }
+  .dash-right { width:320px; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:16px; }
+
+  .chart-box { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .chart-title { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.15em; color:var(--muted); text-transform:uppercase; margin-bottom:16px; }
+
+  /* Zone table */
+  .zone-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .zone-table th { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; padding:8px 12px; border-bottom:1px solid var(--border); text-align:left; }
+  .zone-table td { padding:10px 12px; border-bottom:1px solid rgba(30,37,53,.5); }
+  .zone-table tr { cursor:pointer; border-left:2px solid transparent; transition:all .15s; }
+  .zone-table tr:hover { background:rgba(255,255,255,.02); }
+  .zone-table tr.selected { background:rgba(255,34,0,.05); border-left:2px solid var(--red); }
+
+  .risk-badge { padding:3px 8px; border-radius:4px; font-size:11px; font-weight:700; color:white; }
+
+  /* Mitigation */
+  .mit-card { border-radius:0 8px 8px 0; padding:16px; }
+  .mit-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .mit-priority { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); }
+  .mit-summary { font-size:12px; color:var(--muted); line-height:1.6; margin-bottom:12px; }
+  .mit-action-title { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.15em; color:var(--muted); text-transform:uppercase; margin-bottom:10px; }
+  .mit-action { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); font-size:12px; line-height:1.5; }
+  .mit-action:last-child { border-bottom:none; }
+  .mit-arrow { font-weight:700; flex-shrink:0; }
+
+  .zone-btn {
+    display:block; width:100%; padding:10px 14px; margin-bottom:6px;
+    background:var(--panel); border:1px solid var(--border); border-radius:6px;
+    color:var(--muted); font-family:'Syne',sans-serif; font-size:13px; font-weight:700;
+    cursor:pointer; text-align:left; transition:all .2s;
+  }
+  .zone-btn.active { background:rgba(255,34,0,.08); border-color:var(--red); color:var(--red); }
+
+  /* MAP PAGE */
+  #page-heatmap { flex-direction:column; }
+  .map-controls {
+    display:flex; align-items:center; gap:8px; padding:12px 24px;
+    border-bottom:1px solid var(--border); background:var(--panel); flex-shrink:0; flex-wrap:wrap;
+  }
+  .ctrl-label { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); }
+  .filter-btn {
+    padding:6px 14px; border:1px solid var(--border); border-radius:6px;
+    background:transparent; color:var(--muted); font-family:'Syne',sans-serif;
+    font-size:12px; font-weight:600; cursor:pointer; transition:all .2s;
+  }
+  .filter-btn:hover { color:var(--text); }
+  .filter-btn.active { background:var(--red); border-color:var(--red); color:white; }
+  #map { flex:1; }
+  .map-legend {
+    position:absolute; bottom:24px; left:280px; z-index:1000;
+    background:rgba(10,12,16,.9); border:1px solid var(--border);
+    border-radius:8px; padding:12px; backdrop-filter:blur(8px);
+  }
+  .map-legend strong { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:8px; }
+  .legend-item { display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:6px; }
+  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+  .loading-overlay {
+    display:none; position:fixed; inset:0; background:rgba(10,12,16,.7);
+    z-index:999; align-items:center; justify-content:center; flex-direction:column; gap:12px;
+  }
+  .loading-overlay.show { display:flex; }
+  .spinner { width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--red); border-radius:50%; animation:spin 1s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .loading-text { font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text">Analyzing satellite data...</div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-title">🌡 UHI Detect</div>
+    <div class="logo-sub">NMAMIT · AM2001-1</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-label">Navigation</div>
+    <div class="nav-item active" onclick="showPage('dashboard', this)">▦ &nbsp;Dashboard</div>
+    <div class="nav-item" onclick="showPage('heatmap', this)">◎ &nbsp;Heatmap</div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="city-box">
+      <div class="city-label">Selected City</div>
+      <select class="city-select" id="citySelect" onchange="onCityChange()">
+        <option value="bengaluru">Bengaluru</option>
+        <option value="hyderabad">Hyderabad</option>
+        <option value="mumbai">Mumbai</option>
+        <option value="delhi">Delhi</option>
+        <option value="chennai">Chennai</option>
+        <option value="mangaluru">Mangaluru</option>
+        <option value="ahmedabad">Ahmedabad</option>
+        <option value="kolkata">Kolkata</option>
+        <option value="pune">Pune</option>
+      </select>
+    </div>
+    <button class="analyze-btn" onclick="loadCity()">⚡ Analyze</button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <h1 id="topbarTitle">Bengaluru — Heat Analysis</h1>
+      <p>LANDSAT 8 · COLLECTION 2 LEVEL-2 · LST + NDVI + NDBI</p>
+    </div>
+    <div class="status-badge">
+      <div class="status-dot"></div>
+      <span id="statusText">Ready</span>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-top" style="background:#ff2200"></div>
+      <div class="stat-lbl">Max LST</div>
+      <div class="stat-val" style="color:#ff2200" id="statMaxLST">—</div>
+      <div class="stat-unit">°C · Peak hotspot</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top" style="background:#ff7700"></div>
+      <div class="stat-lbl">Avg Urban Temp</div>
+      <div class="stat-val" style="color:#ff7700" id="statAvgLST">—</div>
+      <div class="stat-unit">°C · City average</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top" style="background:#2ecc71"></div>
+      <div class="stat-lbl">Avg NDVI</div>
+      <div class="stat-val" style="color:#2ecc71" id="statNDVI">—</div>
+      <div class="stat-unit">Vegetation index</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top" style="background:#00b4d8"></div>
+      <div class="stat-lbl">Min LST</div>
+      <div class="stat-val" style="color:#00b4d8" id="statMinLST">—</div>
+      <div class="stat-unit">°C · Coolest zone</div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div class="page active" id="page-dashboard">
+    <div class="dash-left">
+
+      <!-- Feature Importance -->
+      <div class="chart-box">
+        <div class="chart-title">Feature Importance — Random Forest Model</div>
+        <canvas id="importanceChart" height="120"></canvas>
+      </div>
+
+      <!-- Pie Chart -->
+      <div class="chart-box">
+        <div class="chart-title">Heat Zone Distribution</div>
+        <canvas id="pieChart" height="160"></canvas>
+      </div>
+
+      <!-- Zone Table -->
+      <div class="chart-box">
+        <div class="chart-title">Zone Statistics — Click row for mitigation suggestions</div>
+        <table class="zone-table">
+          <thead>
+            <tr>
+              <th>Risk Zone</th><th>Areas / Localities</th><th>Coverage</th>
+              <th>Avg LST</th><th>Avg NDVI</th>
+            </tr>
+          </thead>
+          <tbody id="zoneTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="dash-right">
+      <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">
+        Mitigation Suggestions
+      </div>
+
+      <div id="mitCard" class="mit-card" style="background:var(--panel);border-left:4px solid var(--red);">
+        <div class="mit-header">
+          <span class="risk-badge" id="mitBadge" style="background:var(--red)">Critical Risk</span>
+          <span class="mit-priority" id="mitPriority">Critical</span>
+        </div>
+        <p class="mit-summary" id="mitSummary">Select a city and click Analyze to load data.</p>
+        <div class="mit-action-title">Recommended Actions</div>
+        <div id="mitActions"></div>
+      </div>
+
+      <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-top:8px;margin-bottom:8px;">
+        Select Zone
+      </div>
+      <button class="zone-btn active" onclick="selectRisk('Critical', this)">Critical Risk Zone</button>
+      <button class="zone-btn" onclick="selectRisk('High', this)">High Risk Zone</button>
+      <button class="zone-btn" onclick="selectRisk('Moderate', this)">Moderate Risk Zone</button>
+      <button class="zone-btn" onclick="selectRisk('Low', this)">Low Risk Zone</button>
+    </div>
+  </div>
+
+  <!-- HEATMAP PAGE -->
+  <div class="page" id="page-heatmap" style="position:relative;">
+    <div class="map-controls">
+      <span class="ctrl-label">Filter:</span>
+      <button class="filter-btn active" onclick="filterMap('All', this)">All</button>
+      <button class="filter-btn" onclick="filterMap('Low', this)">Low</button>
+      <button class="filter-btn" onclick="filterMap('Moderate', this)">Moderate</button>
+      <button class="filter-btn" onclick="filterMap('High', this)">High</button>
+      <button class="filter-btn" onclick="filterMap('Critical', this)">Critical</button>
+    </div>
+    <div id="map"></div>
+    <div class="map-legend">
+      <strong>Heat Risk</strong>
+      <div class="legend-item"><div class="legend-dot" style="background:#2ecc71"></div>Low</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffcc00"></div>Moderate</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff7700"></div>High</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff2200"></div>Critical</div>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<script>
+const API = 'http://localhost:5000';
+const RISK_COLORS = { Low:'#2ecc71', Moderate:'#ffcc00', High:'#ff7700', Critical:'#ff2200' };
+const CITY_CENTERS = {
+  bengaluru:[12.97,77.59], hyderabad:[17.39,78.49], mumbai:[19.08,72.88],
+  delhi:[28.61,77.21], chennai:[13.08,80.27], mangaluru:[12.87,74.88],
+  ahmedabad:[23.02,72.57], kolkata:[22.57,88.36], pune:[18.52,73.86]
+};
+const CITY_NAMES = {
+  bengaluru:'Bengaluru', hyderabad:'Hyderabad', mumbai:'Mumbai',
+  delhi:'Delhi', chennai:'Chennai', mangaluru:'Mangaluru',
+  ahmedabad:'Ahmedabad', kolkata:'Kolkata', pune:'Pune'
+};
+
+let currentCity = 'bengaluru';
+let currentRisk = 'Critical';
+let importanceChart = null;
+let pieChart = null;
+let map = null;
+let mapLayer = null;
+let allGeoData = null;
+
+// ── City Zone Names (hardcoded from domain knowledge) ──
+const CITY_ZONES = {
+  bengaluru: {
+    Critical: ['CBD / MG Road', 'Peenya Industrial Area', 'Electronic City'],
+    High:     ['Whitefield', 'Marathahalli', 'Hebbal'],
+    Moderate: ['Bannerghatta Road', 'JP Nagar', 'Yeshwanthpur'],
+    Low:      ['Cubbon Park', 'Lalbagh', 'Ulsoor Lake'],
+  },
+  hyderabad: {
+    Critical: ['Secunderabad', 'KPHB Colony', 'Uppal Industrial Area'],
+    High:     ['Kukatpally', 'LB Nagar', 'Nacharam'],
+    Moderate: ['Madhapur', 'Kondapur', 'Miyapur'],
+    Low:      ['Hussain Sagar Lake', 'KBR Park', 'Gandipet Lake'],
+  },
+  mumbai: {
+    Critical: ['Dharavi', 'Kurla', 'Bhiwandi Industrial'],
+    High:     ['Andheri East', 'Govandi', 'Mankhurd'],
+    Moderate: ['Bandra', 'Malad', 'Borivali'],
+    Low:      ['Sanjay Gandhi NP', 'Aarey Colony', 'Powai Lake'],
+  },
+  delhi: {
+    Critical: ['Shahdara', 'Okhla Industrial', 'Narela'],
+    High:     ['Rohini', 'Dwarka', 'Laxmi Nagar'],
+    Moderate: ['Karol Bagh', 'Janakpuri', 'Pitampura'],
+    Low:      ['Ridge Forest', 'Lodhi Garden', 'Yamuna Floodplain'],
+  },
+  chennai: {
+    Critical: ['Ambattur Industrial', 'Manali', 'Washermanpet'],
+    High:     ['Avadi', 'Kolathur', 'Vyasarpadi'],
+    Moderate: ['Anna Nagar', 'Velachery', 'Tambaram'],
+    Low:      ['Guindy NP', 'Adyar River Estuary', 'Pallikaranai Marsh'],
+  },
+  mangaluru: {
+    Critical: ['Bunder Port Area', 'Bikarnakatte', 'Bondel'],
+    High:     ['Kadri', 'Bejai', 'Kankanady'],
+    Moderate: ['Mangaladevi', 'Attavar', 'Urwa'],
+    Low:      ['Tannirbhavi Beach', 'Pilikula Lake', 'Kadri Park'],
+  },
+  ahmedabad: {
+    Critical: ['Naroda Industrial', 'Odhav', 'Vatva GIDC'],
+    High:     ['Bapunagar', 'Gomtipur', 'Rakhial'],
+    Moderate: ['Satellite', 'Navrangpura', 'Ghatlodia'],
+    Low:      ['Kankaria Lake', 'Sabarmati Riverfront', 'Thaltej Wetland'],
+  },
+  kolkata: {
+    Critical: ['Howrah Industrial', 'Garden Reach', 'Topsia'],
+    High:     ['Tangra', 'Tiljala', 'Metiabruz'],
+    Moderate: ['Dum Dum', 'Behala', 'Garia'],
+    Low:      ['East Kolkata Wetlands', 'Rabindra Sarobar', 'Maidan'],
+  },
+  pune: {
+    Critical: ['Bhosari Industrial', 'Hadapsar', 'Dapodi'],
+    High:     ['Kothrud', 'Warje', 'Kondhwa'],
+    Moderate: ['Baner', 'Aundh', 'Wakad'],
+    Low:      ['Sinhagad Valley', 'Pashan Lake', 'Bund Garden'],
+  },
+};
+
+// ── Page Navigation ──
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  el.classList.add('active');
+  if (name === 'heatmap') initMap();
+}
+
+// ── City Change ──
+function onCityChange() {
+  currentCity = document.getElementById('citySelect').value;
+  document.getElementById('topbarTitle').textContent = CITY_NAMES[currentCity] + ' — Heat Analysis';
+}
+
+// ── Load City Data ──
+async function loadCity() {
+  currentCity = document.getElementById('citySelect').value;
+  document.getElementById('topbarTitle').textContent = CITY_NAMES[currentCity] + ' — Heat Analysis';
+  document.getElementById('statusText').textContent = 'Analyzing...';
+  document.getElementById('loading').classList.add('show');
+
+  try {
+    const [statsRes, impRes] = await Promise.all([
+      fetch(`${API}/api/stats?city=${currentCity}`),
+      fetch(`${API}/api/feature-importance?city=${currentCity}`)
+    ]);
+    const stats = await statsRes.json();
+    const imp   = await impRes.json();
+
+    updateStatCards(stats);
+    updateCharts(stats, imp);
+    updateZoneTable(stats);
+    loadMitigation(currentRisk);
+
+    // Preload geo data
+    const geoRes = await fetch(`${API}/api/heatmap?city=${currentCity}`);
+    allGeoData = await geoRes.json();
+    if (map) renderMapLayer('All');
+
+    document.getElementById('statusText').textContent = 'Analysis Complete';
+  } catch(e) {
+    document.getElementById('statusText').textContent = 'Error — Is Flask running?';
+    alert('Cannot connect to Flask API at ' + API + '\n\nMake sure you ran: python app.py');
+  }
+  document.getElementById('loading').classList.remove('show');
+}
+
+// ── Stat Cards ──
+function updateStatCards(stats) {
+  document.getElementById('statMaxLST').textContent = stats.max_lst ?? '—';
+  document.getElementById('statAvgLST').textContent = stats.avg_lst ?? '—';
+  document.getElementById('statNDVI').textContent   = stats.avg_ndvi ?? '—';
+  document.getElementById('statMinLST').textContent = stats.min_lst ?? '—';
+}
+
+// ── Charts ──
+function updateCharts(stats, imp) {
+  // Feature Importance
+  if (importanceChart) importanceChart.destroy();
+  const impCtx = document.getElementById('importanceChart').getContext('2d');
+  importanceChart = new Chart(impCtx, {
+    type: 'bar',
+    data: {
+      labels: imp.map(i => i.feature),
+      datasets: [{
+        data: imp.map(i => i.importance),
+        backgroundColor: ['#ff2200','#2ecc71','#00b4d8','#9b59b6'],
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#5a6680', font: { family: 'Space Mono', size: 11 } }, grid: { color: '#1e2535' } },
+        y: { ticks: { color: '#5a6680', font: { family: 'Space Mono', size: 11 } }, grid: { color: '#1e2535' } }
+      }
+    }
+  });
+
+  // Pie chart
+  if (pieChart) pieChart.destroy();
+  const pieCtx = document.getElementById('pieChart').getContext('2d');
+  const dist = stats.risk_distribution || {};
+  pieChart = new Chart(pieCtx, {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(dist),
+      datasets: [{
+        data: Object.values(dist),
+        backgroundColor: Object.keys(dist).map(k => RISK_COLORS[k]),
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { labels: { color: '#e8eaf0', font: { family: 'Syne', size: 12 } } }
+      }
+    }
+  });
+}
+
+// ── Zone Table ──
+function updateZoneTable(stats) {
+  const tbody = document.getElementById('zoneTableBody');
+  tbody.innerHTML = '';
+  const order = ['Critical', 'High', 'Moderate', 'Low'];
+  const zoneStats = stats.zone_stats || {};
+  const cityZones = CITY_ZONES[currentCity] || {};
+
+  order.forEach(risk => {
+    if (!zoneStats[risk]) return;
+    const z = zoneStats[risk];
+    const areas = cityZones[risk] || [];
+    const areaHTML = areas.map(a =>
+      `<span style="
+        display:inline-block; margin:2px 3px 2px 0;
+        padding:2px 7px; border-radius:3px; font-size:10px;
+        background:${RISK_COLORS[risk]}22;
+        color:${RISK_COLORS[risk]};
+        border:1px solid ${RISK_COLORS[risk]}44;
+        font-family:'Space Mono',monospace;
+      ">${a}</span>`
+    ).join('');
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="vertical-align:top;padding:10px 12px;">
+        <span class="risk-badge" style="background:${RISK_COLORS[risk]}">${risk}</span>
+      </td>
+      <td style="padding:10px 12px;">
+        <div>${areaHTML}</div>
+      </td>
+      <td style="font-family:'Space Mono',monospace;font-size:11px;padding:10px 12px;vertical-align:top">${z.pct}%</td>
+      <td style="font-family:'Space Mono',monospace;font-size:11px;color:#ff7700;padding:10px 12px;vertical-align:top">${z.avg_lst}°C</td>
+      <td style="font-family:'Space Mono',monospace;font-size:11px;color:#2ecc71;padding:10px 12px;vertical-align:top">${z.avg_ndvi}</td>
+    `;
+    tr.onclick = () => {
+      document.querySelectorAll('.zone-table tr').forEach(r => r.classList.remove('selected'));
+      tr.classList.add('selected');
+      selectRisk(risk, null);
+    };
+    if (risk === currentRisk) tr.classList.add('selected');
+    tbody.appendChild(tr);
+  });
+}
+
+// ── Mitigation ──
+async function selectRisk(risk, btn) {
+  currentRisk = risk;
+  document.querySelectorAll('.zone-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  loadMitigation(risk);
+}
+
+async function loadMitigation(risk) {
+  try {
+    const res = await fetch(`${API}/api/mitigation/${risk}`);
+    const data = await res.json();
+    const color = RISK_COLORS[risk];
+    const areas = (CITY_ZONES[currentCity] || {})[risk] || [];
+
+    document.getElementById('mitCard').style.borderLeftColor = color;
+    document.getElementById('mitBadge').textContent = risk + ' Risk';
+    document.getElementById('mitBadge').style.background = color;
+    document.getElementById('mitPriority').textContent = 'Priority: ' + data.priority;
+    document.getElementById('mitSummary').textContent = data.summary;
+
+    // Show area names above actions
+    const areaTagsHTML = areas.length ? `
+      <div style="margin-bottom:12px;">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;">
+          Affected Areas
+        </div>
+        ${areas.map(a => `
+          <span style="
+            display:inline-block; margin:2px 3px 2px 0;
+            padding:3px 9px; border-radius:4px; font-size:11px;
+            background:${color}22; color:${color};
+            border:1px solid ${color}55;
+            font-family:'Space Mono',monospace;
+          ">${a}</span>
+        `).join('')}
+      </div>
+    ` : '';
+
+    const actionsEl = document.getElementById('mitActions');
+    actionsEl.innerHTML = areaTagsHTML + (data.actions || []).map(a =>
+      `<div class="mit-action"><span class="mit-arrow" style="color:${color}">→</span><span>${a}</span></div>`
+    ).join('');
+  } catch(e) {}
+}
+
+// ── MAP ──
+function initMap() {
+  if (map) return;
+  map = L.map('map', { center: [12.97, 77.59], zoom: 11 });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors', maxZoom: 18
+  }).addTo(map);
+  if (allGeoData) renderMapLayer('All');
+}
+
+function filterMap(risk, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMapLayer(risk);
+}
+
+function renderMapLayer(filter) {
+  if (!map || !allGeoData) return;
+  if (mapLayer) map.removeLayer(mapLayer);
+  const center = CITY_CENTERS[currentCity];
+  if (center) map.flyTo(center, 11, { duration: 1 });
+
+  let features = allGeoData.features || [];
+  if (filter !== 'All') features = features.filter(f => f.properties.risk === filter);
+
+  mapLayer = L.geoJSON({ type:'FeatureCollection', features }, {
+    pointToLayer: (feature, latlng) => {
+      const color = RISK_COLORS[feature.properties.risk] || '#888';
+      return L.circleMarker(latlng, {
+        radius: 5, fillColor: color, color, weight: .5, opacity: .9, fillOpacity: .75
+      });
+    },
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties;
+      layer.bindTooltip(
+        `<b style="color:${RISK_COLORS[p.risk]}">${p.risk} Risk</b><br>
+         LST: <b>${p.lst}°C</b><br>NDVI: ${p.ndvi}<br>NDBI: ${p.ndbi}`,
+        { sticky: true }
+      );
+    }
+  }).addTo(map);
+}
+
+// ── Load Bengaluru on start ──
+window.onload = () => loadCity();
+</script>
+</body>
+</html>

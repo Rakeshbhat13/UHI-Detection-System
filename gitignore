@@ -1,0 +1,92 @@
+# =====================
+# Python
+# =====================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.so
+.eggs/
+*.egg-info/
+dist/
+build/
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+
+# =====================
+# Environment & Secrets
+# =====================
+.env
+.env.local
+*.env
+gee_token.json
+service_account_key.json
+credentials.json
+ee_credentials
+
+# =====================
+# Google Earth Engine
+# =====================
+.config/earthengine/
+
+# =====================
+# Generated Data Files
+# (large — re-run prepare_cities.py to regenerate)
+# =====================
+data/*_features.csv
+data/*_heatmap.geojson
+data/*_stats.json
+data/heatmap.geojson
+data/stats.json
+*.csv
+*.geojson
+
+# =====================
+# Trained ML Models
+# (large binary files — re-run pipeline.py to regenerate)
+# =====================
+ml/models/**/*.pkl
+ml/models/**/*.joblib
+ml/models/**/cluster_centers.csv
+ml/models/**/feature_importance.json
+ml/models/*.pkl
+ml/models/*.joblib
+
+# Raw dataset (too large for git)
+India_9Cities_UHI_ML_Dataset.csv
+
+# =====================
+# Logs
+# =====================
+*.log
+logs/
+flask.log
+
+# =====================
+# OS & Editor Files
+# =====================
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# =====================
+# Jupyter (if used)
+# =====================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# =====================
+# Testing & Coverage
+# =====================
+.pytest_cache/
+.coverage
+htmlcov/
