@@ -2,10 +2,6 @@
 
 A full-stack web application for detecting, analyzing, and visualizing Urban Heat Island (UHI) effects across 9 major Indian cities using Landsat 8 satellite imagery and a K-Means + Random Forest machine learning pipeline.
 
-> **Course:** Advanced Machine Learning (AM2001-1)
-> **Institution:** NMAM Institute of Technology (NMAMIT), Nitte Deemed to be University
-> **Team:** B G Bharadwaj · Rakesh Bhat · Jnanamshu K
-
 ---
 
 ## 🏙️ Supported Cities
