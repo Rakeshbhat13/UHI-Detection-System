@@ -1,0 +1,45 @@
+{
+  "city": "Mumbai",
+  "city_key": "mumbai",
+  "total_pixels": 359,
+  "avg_lst": 35.56,
+  "max_lst": 46.86,
+  "min_lst": 28.27,
+  "avg_ndvi": 0.247,
+  "risk_distribution": {
+    "Critical": 150,
+    "High": 86,
+    "Low": 67,
+    "Moderate": 56
+  },
+  "zone_stats": {
+    "Low": {
+      "count": 67,
+      "avg_lst": 29.44,
+      "avg_ndvi": -0.131,
+      "avg_ndbi": -0.272,
+      "pct": 18.7
+    },
+    "Moderate": {
+      "count": 56,
+      "avg_lst": 32.71,
+      "avg_ndvi": 0.574,
+      "avg_ndbi": -0.272,
+      "pct": 15.6
+    },
+    "High": {
+      "count": 86,
+      "avg_lst": 35.62,
+      "avg_ndvi": 0.395,
+      "avg_ndbi": -0.112,
+      "pct": 24.0
+    },
+    "Critical": {
+      "count": 150,
+      "avg_lst": 39.31,
+      "avg_ndvi": 0.208,
+      "avg_ndbi": 0.015,
+      "pct": 41.8
+    }
+  }
+}

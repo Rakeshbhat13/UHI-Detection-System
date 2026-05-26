@@ -1,0 +1,45 @@
+{
+  "city": "Kolkata",
+  "city_key": "kolkata",
+  "total_pixels": 499,
+  "avg_lst": 29.25,
+  "max_lst": 36.01,
+  "min_lst": 23.32,
+  "avg_ndvi": 0.361,
+  "risk_distribution": {
+    "Critical": 207,
+    "High": 170,
+    "Moderate": 91,
+    "Low": 31
+  },
+  "zone_stats": {
+    "Low": {
+      "count": 31,
+      "avg_lst": 24.67,
+      "avg_ndvi": 0.041,
+      "avg_ndbi": -0.44,
+      "pct": 6.2
+    },
+    "Moderate": {
+      "count": 91,
+      "avg_lst": 27.67,
+      "avg_ndvi": 0.595,
+      "avg_ndbi": -0.238,
+      "pct": 18.2
+    },
+    "High": {
+      "count": 170,
+      "avg_lst": 29.19,
+      "avg_ndvi": 0.419,
+      "avg_ndbi": -0.112,
+      "pct": 34.1
+    },
+    "Critical": {
+      "count": 207,
+      "avg_lst": 30.68,
+      "avg_ndvi": 0.259,
+      "avg_ndbi": 0.009,
+      "pct": 41.5
+    }
+  }
+}

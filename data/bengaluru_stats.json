@@ -1,0 +1,45 @@
+{
+  "city": "Bengaluru",
+  "city_key": "bengaluru",
+  "total_pixels": 1000,
+  "avg_lst": 33.2,
+  "max_lst": 46.39,
+  "min_lst": 19.76,
+  "avg_ndvi": 0.313,
+  "risk_distribution": {
+    "Critical": 251,
+    "Low": 250,
+    "High": 250,
+    "Moderate": 249
+  },
+  "zone_stats": {
+    "Low": {
+      "count": 250,
+      "avg_lst": 24.95,
+      "avg_ndvi": 0.602,
+      "avg_ndbi": -0.203,
+      "pct": 25.0
+    },
+    "Moderate": {
+      "count": 249,
+      "avg_lst": 30.22,
+      "avg_ndvi": 0.403,
+      "avg_ndbi": -0.001,
+      "pct": 24.9
+    },
+    "High": {
+      "count": 250,
+      "avg_lst": 35.85,
+      "avg_ndvi": 0.2,
+      "avg_ndbi": 0.102,
+      "pct": 25.0
+    },
+    "Critical": {
+      "count": 251,
+      "avg_lst": 41.71,
+      "avg_ndvi": 0.051,
+      "avg_ndbi": 0.22,
+      "pct": 25.1
+    }
+  }
+}

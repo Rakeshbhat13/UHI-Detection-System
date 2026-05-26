@@ -1,0 +1,45 @@
+{
+  "city": "Ahmedabad",
+  "city_key": "ahmedabad",
+  "total_pixels": 500,
+  "avg_lst": 37.63,
+  "max_lst": 44.59,
+  "min_lst": 28.56,
+  "avg_ndvi": 0.268,
+  "risk_distribution": {
+    "Moderate": 171,
+    "Critical": 146,
+    "High": 118,
+    "Low": 65
+  },
+  "zone_stats": {
+    "Low": {
+      "count": 65,
+      "avg_lst": 35.72,
+      "avg_ndvi": 0.505,
+      "avg_ndbi": -0.151,
+      "pct": 13.0
+    },
+    "Moderate": {
+      "count": 171,
+      "avg_lst": 36.5,
+      "avg_ndvi": 0.164,
+      "avg_ndbi": -0.008,
+      "pct": 34.2
+    },
+    "High": {
+      "count": 118,
+      "avg_lst": 37.69,
+      "avg_ndvi": 0.367,
+      "avg_ndbi": -0.024,
+      "pct": 23.6
+    },
+    "Critical": {
+      "count": 146,
+      "avg_lst": 39.74,
+      "avg_ndvi": 0.205,
+      "avg_ndbi": 0.041,
+      "pct": 29.2
+    }
+  }
+}

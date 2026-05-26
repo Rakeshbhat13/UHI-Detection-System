@@ -1,0 +1,45 @@
+{
+  "city": "Chennai",
+  "city_key": "chennai",
+  "total_pixels": 491,
+  "avg_lst": 35.78,
+  "max_lst": 49.17,
+  "min_lst": 28.02,
+  "avg_ndvi": 0.231,
+  "risk_distribution": {
+    "Critical": 225,
+    "Low": 165,
+    "High": 78,
+    "Moderate": 23
+  },
+  "zone_stats": {
+    "Low": {
+      "count": 165,
+      "avg_lst": 29.26,
+      "avg_ndvi": 0.055,
+      "avg_ndbi": 0.242,
+      "pct": 33.6
+    },
+    "Moderate": {
+      "count": 23,
+      "avg_lst": 30.51,
+      "avg_ndvi": -0.017,
+      "avg_ndbi": -0.166,
+      "pct": 4.7
+    },
+    "High": {
+      "count": 78,
+      "avg_lst": 38.33,
+      "avg_ndvi": 0.524,
+      "avg_ndbi": -0.158,
+      "pct": 15.9
+    },
+    "Critical": {
+      "count": 225,
+      "avg_lst": 40.21,
+      "avg_ndvi": 0.285,
+      "avg_ndbi": -0.004,
+      "pct": 45.8
+    }
+  }
+}

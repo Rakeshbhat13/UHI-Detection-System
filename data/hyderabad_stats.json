@@ -1,0 +1,45 @@
+{
+  "city": "Hyderabad",
+  "city_key": "hyderabad",
+  "total_pixels": 500,
+  "avg_lst": 37.03,
+  "max_lst": 45.06,
+  "min_lst": 26.31,
+  "avg_ndvi": 0.304,
+  "risk_distribution": {
+    "Critical": 269,
+    "High": 164,
+    "Moderate": 52,
+    "Low": 15
+  },
+  "zone_stats": {
+    "Low": {
+      "count": 15,
+      "avg_lst": 28.34,
+      "avg_ndvi": 0.007,
+      "avg_ndbi": -0.268,
+      "pct": 3.0
+    },
+    "Moderate": {
+      "count": 52,
+      "avg_lst": 35.24,
+      "avg_ndvi": 0.587,
+      "avg_ndbi": -0.175,
+      "pct": 10.4
+    },
+    "High": {
+      "count": 164,
+      "avg_lst": 36.84,
+      "avg_ndvi": 0.382,
+      "avg_ndbi": -0.032,
+      "pct": 32.8
+    },
+    "Critical": {
+      "count": 269,
+      "avg_lst": 37.97,
+      "avg_ndvi": 0.219,
+      "avg_ndbi": 0.049,
+      "pct": 53.8
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "city": "Mangaluru",
+  "city_key": "mangaluru",
+  "total_pixels": 486,
+  "avg_lst": 35.23,
+  "max_lst": 44.35,
+  "min_lst": 29.28,
+  "avg_ndvi": 0.426,
+  "risk_distribution": {
+    "High": 165,
+    "Moderate": 127,
+    "Critical": 104,
+    "Low": 90
+  },
+  "zone_stats": {
+    "Low": {
+      "count": 90,
+      "avg_lst": 30.55,
+      "avg_ndvi": -0.137,
+      "avg_ndbi": -0.148,
+      "pct": 18.5
+    },
+    "Moderate": {
+      "count": 127,
+      "avg_lst": 34.39,
+      "avg_ndvi": 0.745,
+      "avg_ndbi": -0.283,
+      "pct": 26.1
+    },
+    "High": {
+      "count": 165,
+      "avg_lst": 36.2,
+      "avg_ndvi": 0.551,
+      "avg_ndbi": -0.093,
+      "pct": 34.0
+    },
+    "Critical": {
+      "count": 104,
+      "avg_lst": 38.77,
+      "avg_ndvi": 0.325,
+      "avg_ndbi": 0.072,
+      "pct": 21.4
+    }
+  }
+}

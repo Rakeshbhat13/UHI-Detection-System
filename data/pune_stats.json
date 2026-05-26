@@ -1,0 +1,45 @@
+{
+  "city": "Pune",
+  "city_key": "pune",
+  "total_pixels": 500,
+  "avg_lst": 34.05,
+  "max_lst": 40.55,
+  "min_lst": 26.46,
+  "avg_ndvi": 0.332,
+  "risk_distribution": {
+    "High": 166,
+    "Critical": 149,
+    "Moderate": 125,
+    "Low": 60
+  },
+  "zone_stats": {
+    "Low": {
+      "count": 60,
+      "avg_lst": 31.29,
+      "avg_ndvi": 0.573,
+      "avg_ndbi": -0.191,
+      "pct": 12.0
+    },
+    "Moderate": {
+      "count": 125,
+      "avg_lst": 33.0,
+      "avg_ndvi": 0.426,
+      "avg_ndbi": -0.072,
+      "pct": 25.0
+    },
+    "High": {
+      "count": 166,
+      "avg_lst": 33.29,
+      "avg_ndvi": 0.271,
+      "avg_ndbi": -0.008,
+      "pct": 33.2
+    },
+    "Critical": {
+      "count": 149,
+      "avg_lst": 36.89,
+      "avg_ndvi": 0.223,
+      "avg_ndbi": 0.06,
+      "pct": 29.8
+    }
+  }
+}

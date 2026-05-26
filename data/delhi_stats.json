@@ -1,0 +1,45 @@
+{
+  "city": "Delhi",
+  "city_key": "delhi",
+  "total_pixels": 500,
+  "avg_lst": 34.62,
+  "max_lst": 42.16,
+  "min_lst": 27.53,
+  "avg_ndvi": 0.333,
+  "risk_distribution": {
+    "Critical": 222,
+    "High": 171,
+    "Moderate": 95,
+    "Low": 12
+  },
+  "zone_stats": {
+    "Low": {
+      "count": 12,
+      "avg_lst": 29.08,
+      "avg_ndvi": 0.165,
+      "avg_ndbi": -0.325,
+      "pct": 2.4
+    },
+    "Moderate": {
+      "count": 95,
+      "avg_lst": 32.82,
+      "avg_ndvi": 0.547,
+      "avg_ndbi": -0.192,
+      "pct": 19.0
+    },
+    "High": {
+      "count": 171,
+      "avg_lst": 34.21,
+      "avg_ndvi": 0.377,
+      "avg_ndbi": -0.094,
+      "pct": 34.2
+    },
+    "Critical": {
+      "count": 222,
+      "avg_lst": 36.01,
+      "avg_ndvi": 0.216,
+      "avg_ndbi": -0.0,
+      "pct": 44.4
+    }
+  }
+}
