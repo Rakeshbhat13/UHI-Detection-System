@@ -1,92 +1,46 @@
-# =====================
-# Python
-# =====================
+# ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
-*$py.class
 *.pyo
-*.so
-.eggs/
+*.pyd
+.Python
+*.egg
 *.egg-info/
 dist/
 build/
 
-# Virtual Environments
-venv/
-env/
-ENV/
-.venv/
+# ── ML Model files (large binaries — don't commit) ────────────────────────────
+*.pkl
+*.joblib
+*.h5
+*.model
 
-# =====================
-# Environment & Secrets
-# =====================
+# ── Environment ───────────────────────────────────────────────────────────────
 .env
 .env.local
-*.env
-gee_token.json
-service_account_key.json
-credentials.json
-ee_credentials
+.venv/
+venv/
+env/
 
-# =====================
-# Google Earth Engine
-# =====================
+# ── GEE credentials ───────────────────────────────────────────────────────────
 .config/earthengine/
+credentials
 
-# =====================
-# Generated Data Files
-# (large — re-run prepare_cities.py to regenerate)
-# =====================
-data/*_features.csv
-data/*_heatmap.geojson
-data/*_stats.json
-data/heatmap.geojson
-data/stats.json
-*.csv
-*.geojson
-
-# =====================
-# Trained ML Models
-# (large binary files — re-run pipeline.py to regenerate)
-# =====================
-ml/models/**/*.pkl
-ml/models/**/*.joblib
-ml/models/**/cluster_centers.csv
-ml/models/**/feature_importance.json
-ml/models/*.pkl
-ml/models/*.joblib
-
-# Raw dataset (too large for git)
-India_9Cities_UHI_ML_Dataset.csv
-
-# =====================
-# Logs
-# =====================
-*.log
-logs/
-flask.log
-
-# =====================
-# OS & Editor Files
-# =====================
+# ── OS files ──────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 desktop.ini
-.idea/
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
 .vscode/
-*.swp
-*.swo
-*~
+.idea/
+*.sublime-project
+*.sublime-workspace
 
-# =====================
-# Jupyter (if used)
-# =====================
+# ── Jupyter ───────────────────────────────────────────────────────────────────
 .ipynb_checkpoints/
-*.ipynb_checkpoints
+*.ipynb
 
-# =====================
-# Testing & Coverage
-# =====================
-.pytest_cache/
-.coverage
-htmlcov/
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
